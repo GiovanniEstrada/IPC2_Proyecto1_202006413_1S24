@@ -1,4 +1,4 @@
-class ListaPatrones:
+class ListaAzulejos:
 
     def __init__(self):
         self.cabeza = None
@@ -17,8 +17,16 @@ class ListaPatrones:
     def imprimir(self):
         tmpNodoActual = self.cabeza
         while tmpNodoActual:
-            print("Codigo: ", tmpNodoActual.Codigo)
-            tmpNodoActual.Patron.imprimir()
+            print("COLOR AZULEJO: ", tmpNodoActual.CodAzulejo)
             tmpNodoActual = tmpNodoActual.siguiente            
+
+    def buscarAzulejo(self, vlColumnaT, vlFilaB, vlColumnaB):
+        # SE BUSCA EL NUMERO DE ITERACIONES QUE NECESITA PARA LA BUSQUEDA
+        iteracion = (vlFilaB) * (vlColumnaT) + vlColumnaB
+        tmpNodoActual = self.cabeza
+        for i in range(iteracion):
+            tmpNodoActual = tmpNodoActual.siguiente
+        
+        return tmpNodoActual
+
                 
-    

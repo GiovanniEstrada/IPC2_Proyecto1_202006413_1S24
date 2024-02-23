@@ -1,0 +1,36 @@
+digraph G {
+	edge [style=invis]
+	rankdir=TB
+	node [shape=box style=filled]
+	subgraph matriz_azulejos {
+		T [label="Nombre piso: PRUEBA" fontsize=15 shape=plaintext]
+		S [label="Código: cod21" fontsize=15 shape=plaintext]
+		33 [label=B fillcolor=white]
+		32 [label=N fillcolor=black fontcolor=white]
+		32 -> 32 [style=invis]
+		31 [label=B fillcolor=white]
+		31 -> 31 [style=invis]
+		23 [label=N fillcolor=black fontcolor=white]
+		23 -> 23 [style=invis]
+		22 [label=B fillcolor=white]
+		22 -> 22 [style=invis]
+		22 -> 22 [style=invis]
+		21 [label=B fillcolor=white]
+		21 -> 21 [style=invis]
+		21 -> 21 [style=invis]
+		13 [label=N fillcolor=black fontcolor=white]
+		13 -> 13 [style=invis]
+		12 [label=N fillcolor=black fontcolor=white]
+		12 -> 12 [style=invis]
+		12 -> 12 [style=invis]
+		11 [label=B fillcolor=white]
+		11 -> 11 [style=invis]
+		11 -> 11 [style=invis]
+	}
+	33 -> 32
+	32 -> 31
+	23 -> 22
+	22 -> 21
+	13 -> 12
+	12 -> 11
+}

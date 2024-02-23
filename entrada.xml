@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pisosGuatemala>
-    <piso nombre="ejemplo01">
+    <piso nombre="EJEMPLO">
         <R> 2 </R>
         <C> 4 </C>
         <F> 1 </F>
@@ -14,7 +14,7 @@
             </patron>
         </patrones>
     </piso>
-    <piso nombre="ejemplo02">
+    <piso nombre="PRUEBA">
         <R> 3 </R>
         <C> 3 </C>
         <F> 1 </F>
@@ -28,7 +28,7 @@
             </patron>
         </patrones>
     </piso>
-    <piso nombre="ejemplo03">
+    <piso nombre="AZULEJOSS">
         <R> 1 </R>
         <C> 5 </C>
         <F> 1000 </F>
