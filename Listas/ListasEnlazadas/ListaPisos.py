@@ -70,7 +70,7 @@ class ListaPisos:
             tmpNodo1 = tmpNodo1.siguiente
 
 
-    def graficarPisos(self, vlNombrePiso):
+    def graficarPisos(self, vlNombrePiso, vlNombrePatron):
 
         # SE HACE AL BUSQUEDA DEL PISO Y SU PATRON
         pisos = self.cabeza
@@ -84,62 +84,185 @@ class ListaPisos:
             print("No se ha encontrado el piso, ingrese nuevamente...")
             return False
         
-
-        while pisos.Patrones:
-                
-                NodoPatrones = pisos.Patrones
-                if pisos.Patrones == None:
-                    break
-                if NodoPatrones.cabeza == None:
-                    break
-
-                dot = Digraph('G')
-                dot.attr(rankdir='TB')
-                dot.attr('node', shape='box', style='filled')
-            
-                n = int(pisos.Fila)
-                m = int(pisos.Columna)
-                with dot.subgraph(name='matriz_azulejos') as c:
-                    # GENERA EL PATRON
-
-                    c.node('T', f'Nombre piso: {vlNombrePiso}', fontsize='15', shape='plaintext')
-
-                    c.node('S', f'Código: {NodoPatrones.cabeza.Codigo}', fontsize='15', shape='plaintext')
-
-                    for i in range(n):
-                        for j in range(m):
-                            tmpNodoAzulejo = pisos.Patrones.cabeza.Patron.buscarAzulejo(m, j, i)
-                            idNodo = node_id = f'{str(n - i) + str(m - j)}'
-                            if str(tmpNodoAzulejo.CodAzulejo) == "N":
-                                c.node(f'{idNodo}', 'N', fillcolor='black', fontcolor='white')
-                            else:
-                                c.node(f'{idNodo}', 'B', fillcolor='white')
-                            
-                            if j > 0:
-                                c.edge(f'{idNodo}', node_id, style='invis')
-                            # Add invisible edges between the nodes in the same column
-                            if i > 0:
-                                c.edge(f'{idNodo}', node_id, style='invis')
+        if pisos.Patrones.cabeza.Codigo == vlNombrePatron:
+            NodoPatrones = pisos.Patrones.cola
+        else:
+            NodoPatrones = pisos.Patrones.cabeza
 
 
-                for i in range(n):
-                    tmpFilaA = ''
-                    tmpFilaB = ''
-                    tmpEdgeNode = []
-                    for j in range(m):
-                        tmpNodoAzulejo = NodoPatrones.cabeza.Patron.buscarAzulejo(m, i, j)
-                        tmpFilaB = tmpFilaA
-                        tmpFilaA = f'{str(n - i) + str(m - j)}'
-                        if(tmpFilaB != ''):
-                            tmpEdgeNode.append((f'{tmpFilaB}', f'{tmpFilaA}'))
+        dot = Digraph('G')
+        dot.attr(rankdir='TB')
+        dot.attr('node', shape='box', style='filled')
+    
+        n = int(pisos.Fila)
+        m = int(pisos.Columna)
+        with dot.subgraph(name='matriz_azulejos') as c:
 
-                    dot.edges(tmpEdgeNode)
-                    dot.edge_attr.update(style='invis')
-                    print(tmpEdgeNode)
+            c.node('T', f'Nombre piso: {vlNombrePiso}', fontsize='15', shape='plaintext')
 
-                    # Guardar el gráfico
-                dot.render(f'{pisos.Patrones.cabeza.Codigo}.gv', view=True)
+            c.node('S', f'Código: {NodoPatrones.Codigo}', fontsize='15', shape='plaintext')
 
-                NodoPatrones.cabeza = NodoPatrones.cabeza.siguiente
+            for i in range(n):
+                for j in range(m):
+                    
+                    tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, i, j)
+                    idNodo = node_id = f'{str(n - i) + str(m - j)}'
+                    
+                    if tmpNodoAzulejo is None:
+                        break
+
+                    if str(tmpNodoAzulejo.CodAzulejo) == "N":
+                        c.node(f'{idNodo}', 'N', fillcolor='black', fontcolor='white')
+                    else:
+                        c.node(f'{idNodo}', 'B', fillcolor='white')
+                    
+                    if j > 0:
+                        c.edge(f'{idNodo}', node_id, style='invis')
+                    if i > 0:
+                        c.edge(f'{idNodo}', node_id, style='invis')
+
+
+        for i in range(n):
+            tmpFilaA = ''
+            tmpFilaB = ''
+            tmpEdgeNode = []
+            for j in range(m):
+                tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, i, j)
+                tmpFilaB = tmpFilaA
+                tmpFilaA = f'{str(n - i) + str(m - j)}'
+                if(tmpFilaB != ''):
+                    tmpEdgeNode.append((f'{tmpFilaB}', f'{tmpFilaA}'))
+
+            dot.edges(tmpEdgeNode)
+            dot.edge_attr.update(style='invis')
+            print(tmpEdgeNode)
+
+            # Guardar el gráfico
+        dot.render(f'{NodoPatrones.Codigo}.gv', view=True)
+
+        NodoPatrones = NodoPatrones.siguiente
+
+
+
+    def buscarPiso(self, piso):
+        tmpNodoActual = self.cabeza
+        while tmpNodoActual:
+            if tmpNodoActual.Nombre == piso:
+                return True
+            tmpNodoActual = tmpNodoActual.siguiente
+        
+        return False
+    
+    def buscarPatron(self, piso, patron):
+        tmpNodoActual = self.cabeza
+        while tmpNodoActual:
+            if tmpNodoActual.Nombre == piso:
+                if tmpNodoActual.Patrones.buscarPatron(patron):
+                    return True
+            tmpNodoActual = tmpNodoActual.siguiente
+        return False
 
     
+    def instruccionCambio(self, piso, patron):
+        # SE HACE AL BUSQUEDA DEL PISO Y SU PATRON
+        pisos = self.cabeza
+        while pisos:
+            if pisos.Nombre == piso:
+                break
+            pisos = pisos.siguiente
+
+        if pisos.Patrones.cabeza == patron:
+            patronInicial = pisos.Patrones.cabeza.Patron.cabeza
+            patronFinal = pisos.Patrones.cola.Patron.cabeza
+        else:
+            patronInicial = pisos.Patrones.cola.Patron.cabeza
+            patronFinal = pisos.Patrones.cabeza.Patron.cabeza
+
+        m = 0
+        n = 0
+        costo = 0
+
+        while patronInicial:
+
+            tmpPatronInicial = patronInicial
+            tmpCodInicial = patronInicial.CodAzulejo
+
+            m += 1
+            if m > int(pisos.Columna):
+                m = 1
+                n += 1
+
+            if patronInicial.CodAzulejo == patronFinal.CodAzulejo:
+                print(f"{m}x{n}: No hubo movimiento")
+                patronInicial = patronInicial.siguiente
+                patronFinal = patronFinal.siguiente
+                continue
+
+            if int(pisos.Intercambio) < int(pisos.Voltear):
+
+                if m < int(pisos.Columna) and not patronInicial.siguiente is None:
+                    if patronInicial.siguiente.CodAzulejo == patronFinal.CodAzulejo:
+                        # patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
+                        # patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                        print(f"{m}x{n}: Intercambio con {m + 1}x{n} | Costo: Q{pisos.Intercambio}") 
+                        costo += int(pisos.Intercambio)
+                        patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
+                        patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                        patronInicial = patronInicial.siguiente
+                        patronFinal = patronFinal.siguiente
+                        continue
+                
+                flgIntercambio = False
+
+                if n < int(pisos.Fila):
+                    i = n       # Fila salto
+                    j = m       # Columna salto
+
+                    # SE ITERA HASTA EL AZULEJO DE ABAJO
+                    while True:
+                        if patronInicial is None:
+                            break
+
+                        patronInicial = patronInicial.siguiente
+
+                        j += 1
+                        if j > int(pisos.Columna):
+                            j = 1
+                            i += 1
+
+                        if i == (n + 1) and j == m:
+                            if patronInicial is None:
+                                break
+
+                            if patronFinal.CodAzulejo == patronInicial.CodAzulejo:
+                                patronInicial.CodAzulejo = tmpCodInicial
+
+                                flgIntercambio = True
+                                break
+
+                    # SE DEVUELVE EL APUNTADOR HACIA EL AZULEJO QUE HA CAMBIADO
+                    patronInicial = tmpPatronInicial
+                    patronInicial.CodAzulejo = patronFinal.CodAzulejo
+
+                if flgIntercambio:
+
+                    print(f"{m}x{n}: Intercambio con {j}x{i} | Costo: Q{pisos.Voltear}")
+                    costo += int(pisos.Intercambio)
+                    patronInicial = patronInicial.siguiente
+                    patronFinal = patronFinal.siguiente
+                    continue
+
+                # SE VOLTEA EL AZULEJO
+                patronInicial.CodAzulejo = patronFinal.CodAzulejo
+                costo += int(pisos.Voltear)
+                print(f"{m}x{n}: Voltear Azulejo | Costo: Q{pisos.Voltear}")
+                patronInicial = patronInicial.siguiente
+                patronFinal = patronFinal.siguiente
+            else:
+                patronInicial.CodAzulejo = patronFinal.CodAzulejo
+                costo += int(pisos.Voltear)
+                print(f"{m}x{n}: Voltear Azulejo | Costo: Q{pisos.Voltear}")
+                patronInicial = patronInicial.siguiente
+                patronFinal = patronFinal.siguiente
+                    
+

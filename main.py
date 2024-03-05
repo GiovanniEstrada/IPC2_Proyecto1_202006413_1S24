@@ -1,7 +1,9 @@
 # LIBRERIAS PYTHON
 from xml.dom import minidom
 from tkinter import filedialog
+from tkinter import messagebox
 import tkinter as tk
+from tkinter import ttk
 
 # LISTAS DOBLEMENTE ENLAZADAS
 from Listas.ListasEnlazadas.ListaPisos import ListaPisos
@@ -52,6 +54,63 @@ def cargarArchivo(vlListaPisos):
     
     #return vlListaPisos
 
+def abrir_Programa(listaPisos, piso, patron, imprimir):
+    if piso == "" or patron == "":
+        messagebox.showerror("Error", "Falta llenar un campo")
+        return
+    
+    if not listaPisos.buscarPiso(piso):
+        messagebox.showerror("Error", "No se encontró el piso")
+        return
+    
+    if not listaPisos.buscarPatron(piso, patron):
+        messagebox.showerror("Error", "No se encontró el patrón")
+        return
+    
+    pisosTmp = listaPisos
+    pisosTmp.graficarPisos(piso, patron)
+    pisosTmp.instruccionCambio(piso, patron)
+
+    seleccionPiso.destroy()
+
+
+        
+def abrir_seleccionPiso(listaPisos):
+
+    if listaPisos.cabeza is None:
+        messagebox.showerror("Error", "Primero se debe de cargar un archivo")
+        return
+
+    seleccionPiso = tk.Tk()
+    seleccionPiso.title("SELECCION PISO Y PATRON")
+    seleccionPiso.geometry("500x200")
+
+    # Cuadros de texto para ingresar piso y patrón
+    lblPiso = tk.Label(seleccionPiso, text="Ingresa el piso:")
+    lblPiso.pack()
+
+    txtbPiso = tk.Entry(seleccionPiso)
+    txtbPiso.pack()
+
+    lblPatron = tk.Label(seleccionPiso, text="Ingresa el patrón:")
+    lblPatron.pack()
+
+    txtbPatron = tk.Entry(seleccionPiso)
+    txtbPatron.pack()
+
+    opciones = ["Consola", "Txt"]
+
+    opcion_var = tk.StringVar()
+
+    combo = ttk.Combobox(seleccionPiso, textvariable=opcion_var, values=opciones)
+    combo.pack(pady=10)
+
+
+    # Botón para confirmar selección
+    btnConfirmar = tk.Button(seleccionPiso, text="Confirmar", command=lambda: abrir_Programa(listaPisos, txtbPiso.get(), txtbPatron.get(), combo.get()))
+    btnConfirmar.pack()
+
+
 def main():
 #     xml = minidom.parse('entrada.xml')
 #     pisos = xml.getElementsByTagName('piso')
@@ -87,17 +146,22 @@ def main():
     listaPisos = ListaPisos()
     # cargarArchivo("entrada.xml", listaPisos)
     root = tk.Tk()
+    root.geometry("500x400")
+    root.title("PANTALLA PRINCIPAL")
 
-    boton_carga = tk.Button(root, text="Cargar Archivo", command = cargarArchivo(listaPisos))
-    boton_carga.pack()
+    btnCargaArchivo = tk.Button(root, text="Cargar Archivo", width=40, height=5, command = lambda: cargarArchivo(listaPisos))
+    btnCargaArchivo.pack(pady=10)
+
+    btnSeleccionPatron = tk.Button(root, text="Seleccionar Piso", width=40, height=5, command = lambda: abrir_seleccionPiso(listaPisos))
+    btnSeleccionPatron.pack(pady=15)
 
     root.mainloop()
 
     listaPisos.imprimir()
     listaPisos.ordenarPisos()
     print("------------ ORDENANDO POR NOMBRE ---------------------")
-    listaPisos.imprimir()
-    listaPisos.graficarPisos("PRUEBA")
+    # listaPisos.imprimir()
+    # listaPisos.graficarPisos("PRUEBA")
 
 if __name__ == "__main__":
     main()

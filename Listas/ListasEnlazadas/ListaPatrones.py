@@ -20,5 +20,13 @@ class ListaPatrones:
             print("Codigo: ", tmpNodoActual.Codigo)
             tmpNodoActual.Patron.imprimir()
             tmpNodoActual = tmpNodoActual.siguiente            
-                
+    
+    def buscarPatron(self, patron):
+        tmpNodoActual = self.cabeza
+        while tmpNodoActual:
+            if tmpNodoActual.Codigo == patron:
+                return True
+            tmpNodoActual = tmpNodoActual.siguiente
+        
+        return False
     

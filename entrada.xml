@@ -3,7 +3,7 @@
     <piso nombre="EJEMPLO">
         <R> 2 </R>
         <C> 4 </C>
-        <F> 1 </F>
+        <F> 10 </F>
         <S> 1 </S>
         <patrones>
             <patron codigo="cod11">

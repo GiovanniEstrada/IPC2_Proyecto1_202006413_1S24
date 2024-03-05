@@ -1,0 +1,14 @@
+digraph G {
+	edge [style=invis]
+	rankdir=TB
+	node [shape=box style=filled]
+	subgraph matriz_azulejos {
+		T [label="Nombre piso: AZULEJOSS" fontsize=15 shape=plaintext]
+		S [label="Código: cod32" fontsize=15 shape=plaintext]
+		15 [label=N fillcolor=black fontcolor=white]
+	}
+	15 -> 14
+	14 -> 13
+	13 -> 12
+	12 -> 11
+}
