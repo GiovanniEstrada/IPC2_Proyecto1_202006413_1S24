@@ -14,11 +14,11 @@ class ListaPatrones:
             self.cola.siguiente = vlNodo
             self.cola = vlNodo
 
-    def imprimir(self):
+    def imprimir(self, archivo):
         tmpNodoActual = self.cabeza
         while tmpNodoActual:
-            print("Codigo: ", tmpNodoActual.Codigo)
-            tmpNodoActual.Patron.imprimir()
+            archivo.write(f"Codigo Patron:  {tmpNodoActual.Codigo}\n")
+            tmpNodoActual.Patron.imprimir(archivo)
             tmpNodoActual = tmpNodoActual.siguiente            
     
     def buscarPatron(self, patron):
@@ -30,3 +30,14 @@ class ListaPatrones:
         
         return False
     
+    def ordenarPatron(self):
+        if self.cabeza == None:
+            return
+        
+        tmpNodo1Nombre = self.cabeza.Codigo
+        tmpNodo1Patron = self.cabeza.Patron
+        if self.cabeza.Codigo > self.cola.Codigo:
+            self.cabeza.Codigo = self.cola.Codigo
+            self.cabeza.Patron = self.cola.Patron
+            self.cola.Codigo = tmpNodo1Nombre
+            self.cola.Patron = tmpNodo1Patron

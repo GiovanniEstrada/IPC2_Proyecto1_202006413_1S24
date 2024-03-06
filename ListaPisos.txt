@@ -1,0 +1,71 @@
+Nombre:         AZULEJOSS
+Filas:           1 
+Columnas:        5 
+Voltear:         1000 
+Intercambiar:    1 
+Codigo Patron:  cod31
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  N
+Color Azulejo:  N
+Color Azulejo:  N
+Codigo Patron:  cod32
+Color Azulejo:  N
+Color Azulejo:  N
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  B
+------------------------------- 
+
+Nombre:         EJEMPLO
+Filas:           2 
+Columnas:        4 
+Voltear:         10 
+Intercambiar:    1 
+Codigo Patron:  cod11
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  N
+Codigo Patron:  cod12
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+------------------------------- 
+
+Nombre:         PRUEBA
+Filas:           3 
+Columnas:        3 
+Voltear:         10 
+Intercambiar:    1 
+Codigo Patron:  cod22
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  N
+Codigo Patron:  cod23
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  N
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  N
+Color Azulejo:  B
+Color Azulejo:  B
+Color Azulejo:  B
+------------------------------- 
+

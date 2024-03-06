@@ -17,10 +17,10 @@
     <piso nombre="PRUEBA">
         <R> 3 </R>
         <C> 3 </C>
-        <F> 1 </F>
+        <F> 10 </F>
         <S> 1 </S>
         <patrones>
-            <patron codigo="cod21">
+            <patron codigo="cod23">
                 BNNNBNBBB
             </patron>
             <patron codigo="cod22">

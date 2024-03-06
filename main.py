@@ -21,6 +21,8 @@ def cargarArchivo(vlListaPisos):
     if not urlArchivo:
         print("Fallo al cargar el archivo, vuelva a intentarlo!")
 
+    vlListaPisos.cabeza = None
+    vlListaPisos.cola = None
     xml = minidom.parse(urlArchivo)
     pisos = xml.getElementsByTagName('piso')
     
@@ -69,9 +71,7 @@ def abrir_Programa(listaPisos, piso, patron, imprimir):
     
     pisosTmp = listaPisos
     pisosTmp.graficarPisos(piso, patron)
-    pisosTmp.instruccionCambio(piso, patron)
-
-    seleccionPiso.destroy()
+    pisosTmp.instruccionCambio(piso, patron, imprimir)
 
 
         
@@ -152,13 +152,13 @@ def main():
     btnCargaArchivo = tk.Button(root, text="Cargar Archivo", width=40, height=5, command = lambda: cargarArchivo(listaPisos))
     btnCargaArchivo.pack(pady=10)
 
+    btnSeleccionPatron = tk.Button(root, text="Pisos Cargados", width=40, height=5, command = lambda: listaPisos.imprimir())
+    btnSeleccionPatron.pack(pady=15)
+
     btnSeleccionPatron = tk.Button(root, text="Seleccionar Piso", width=40, height=5, command = lambda: abrir_seleccionPiso(listaPisos))
     btnSeleccionPatron.pack(pady=15)
 
     root.mainloop()
-
-    listaPisos.imprimir()
-    listaPisos.ordenarPisos()
     print("------------ ORDENANDO POR NOMBRE ---------------------")
     # listaPisos.imprimir()
     # listaPisos.graficarPisos("PRUEBA")

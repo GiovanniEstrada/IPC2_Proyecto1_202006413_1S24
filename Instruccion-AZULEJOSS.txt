@@ -1,0 +1,6 @@
+5x0: Voltear Azulejo | Costo: Q 1000 
+1x0: Voltear Azulejo | Costo: Q 1000 
+2x0: No hubo movimiento
+3x0: No hubo movimiento
+4x0: Voltear Azulejo | Costo: Q 1000 
+5x0: Voltear Azulejo | Costo: Q 1000 

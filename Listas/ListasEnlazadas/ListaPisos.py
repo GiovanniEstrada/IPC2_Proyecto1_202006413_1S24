@@ -1,4 +1,6 @@
 from graphviz import Digraph
+from Listas.ListasEnlazadas.ListaAzulejos import ListaAzulejos
+from Listas.Nodos.NodoAzulejos import NodoAzulejo
 
 class ListaPisos:
 
@@ -17,16 +19,20 @@ class ListaPisos:
             self.cola = vlNodo
 
     def imprimir(self):
+        self.ordenarPisos()
         tmpNodoActual = self.cabeza
-        while tmpNodoActual:
-            print("NOMBRE: ", tmpNodoActual.Nombre)
-            print("Filas: ", tmpNodoActual.Fila)
-            print("Columnas: ", tmpNodoActual.Columna)
-            print("Voltear: ", tmpNodoActual.Voltear)
-            print("Intercambiar: ", tmpNodoActual.Intercambio)
-            tmpNodoActual.Patrones.imprimir()
-            tmpNodoActual = tmpNodoActual.siguiente
-            print("------------------- \n")
+        with open("ListaPisos.txt", "w") as archivo:
+            archivo.write("")
+        with open("ListaPisos.txt", "a") as archivo:
+            while tmpNodoActual:
+                archivo.write(f"Nombre:         {tmpNodoActual.Nombre}\n")
+                archivo.write(f"Filas:          {tmpNodoActual.Fila}\n")
+                archivo.write(f"Columnas:       {tmpNodoActual.Columna}\n")
+                archivo.write(f"Voltear:        {tmpNodoActual.Voltear}\n")
+                archivo.write(f"Intercambiar:   {tmpNodoActual.Intercambio}\n")
+                tmpNodoActual.Patrones.imprimir(archivo)
+                tmpNodoActual = tmpNodoActual.siguiente
+                archivo.write(f"------------------------------- \n\n")
             
     def ordenarPisos(self):
         if self.cabeza == None:
@@ -67,6 +73,7 @@ class ListaPisos:
                 tmpNodoAnterior.siguiente.Voltear = tmpVoltearNodo
                 tmpNodoAnterior.siguiente.Patrones = tmpPatronesNodo
 
+            tmpNodo1.Patrones.ordenarPatron()
             tmpNodo1 = tmpNodo1.siguiente
 
 
@@ -117,9 +124,9 @@ class ListaPisos:
                         c.node(f'{idNodo}', 'B', fillcolor='white')
                     
                     if j > 0:
-                        c.edge(f'{idNodo}', node_id, style='invis')
+                        c.edge(f'{idNodo}', f'{node_id[:-1]}{m-j}', style='invis')
                     if i > 0:
-                        c.edge(f'{idNodo}', node_id, style='invis')
+                        c.edge(f'{idNodo}', f'{node_id[:-1]}{m-j}', style='invis')
 
 
         for i in range(n):
@@ -163,7 +170,7 @@ class ListaPisos:
         return False
 
     
-    def instruccionCambio(self, piso, patron):
+    def instruccionCambio(self, piso, patron, tipo):
         # SE HACE AL BUSQUEDA DEL PISO Y SU PATRON
         pisos = self.cabeza
         while pisos:
@@ -182,87 +189,205 @@ class ListaPisos:
         n = 0
         costo = 0
 
+        tmpListaAzulejo = ListaAzulejos()
+
+        while patronInicial:
+            tmpCodInicial = patronInicial.CodAzulejo
+            tmpNodoAzulejo = NodoAzulejo(str(tmpCodInicial))
+            tmpListaAzulejo.insertar(tmpNodoAzulejo)
+            patronInicial = patronInicial.siguiente
+
+        if pisos.Patrones.cabeza == patron:
+            patronInicial = pisos.Patrones.cabeza.Patron.cabeza
+            patronFinal = pisos.Patrones.cola.Patron.cabeza
+        else:
+            patronInicial = pisos.Patrones.cola.Patron.cabeza
+            patronFinal = pisos.Patrones.cabeza.Patron.cabeza
+
         while patronInicial:
 
-            tmpPatronInicial = patronInicial
-            tmpCodInicial = patronInicial.CodAzulejo
+            if tipo == "Txt":
+                with open(f"Instruccion-{pisos.Nombre}.txt", "w") as archivo:
+                    archivo.write("INSTRUCCIONES PARA CAMBIO DE PISO: \n")
 
-            m += 1
-            if m > int(pisos.Columna):
-                m = 1
-                n += 1
+                with open(f"Instruccion-{pisos.Nombre}.txt", "a") as archivo:
+                    tmpPatronInicial = patronInicial
+                    tmpCodInicial = patronInicial.CodAzulejo
 
-            if patronInicial.CodAzulejo == patronFinal.CodAzulejo:
-                print(f"{m}x{n}: No hubo movimiento")
-                patronInicial = patronInicial.siguiente
-                patronFinal = patronFinal.siguiente
-                continue
+                    m += 1
+                    if m > int(pisos.Columna):
+                        m = 1
+                        n += 1
 
-            if int(pisos.Intercambio) < int(pisos.Voltear):
-
-                if m < int(pisos.Columna) and not patronInicial.siguiente is None:
-                    if patronInicial.siguiente.CodAzulejo == patronFinal.CodAzulejo:
-                        # patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
-                        # patronInicial.siguiente.CodAzulejo = tmpCodInicial
-                        print(f"{m}x{n}: Intercambio con {m + 1}x{n} | Costo: Q{pisos.Intercambio}") 
-                        costo += int(pisos.Intercambio)
-                        patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
-                        patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                    if patronInicial.CodAzulejo == patronFinal.CodAzulejo:
+                        archivo.write(f"{m}x{n + 1}: No hubo movimiento\n")
                         patronInicial = patronInicial.siguiente
                         patronFinal = patronFinal.siguiente
                         continue
-                
-                flgIntercambio = False
 
-                if n < int(pisos.Fila):
-                    i = n       # Fila salto
-                    j = m       # Columna salto
+                    if int(pisos.Intercambio) < int(pisos.Voltear):
 
-                    # SE ITERA HASTA EL AZULEJO DE ABAJO
-                    while True:
-                        if patronInicial is None:
-                            break
+                        if m < int(pisos.Columna) and not patronInicial.siguiente is None:
+                            if patronInicial.siguiente.CodAzulejo == patronFinal.CodAzulejo:
+                                # patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
+                                # patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                                archivo.write(f"{m}x{n + 1}: Intercambio con {m + 1}x{n + 1} | Costo: Q{pisos.Intercambio}\n") 
+                                costo += int(pisos.Intercambio)
+                                patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
+                                patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                                patronInicial = patronInicial.siguiente
+                                patronFinal = patronFinal.siguiente
+                                continue
+                        
+                        flgIntercambio = False
 
+                        if n < int(pisos.Fila):
+                            i = n       # Fila salto
+                            j = m       # Columna salto
+
+                            # SE ITERA HASTA EL AZULEJO DE ABAJO
+                            while True:
+                                if patronInicial is None:
+                                    break
+
+                                patronInicial = patronInicial.siguiente
+
+                                j += 1
+                                if j > int(pisos.Columna):
+                                    j = 1
+                                    i += 1
+
+                                if i == (n + 1) and j == m:
+                                    if patronInicial is None:
+                                        break
+
+                                    if patronFinal.CodAzulejo == patronInicial.CodAzulejo:
+                                        patronInicial.CodAzulejo = tmpCodInicial
+
+                                        flgIntercambio = True
+                                        break
+
+                            # SE DEVUELVE EL APUNTADOR HACIA EL AZULEJO QUE HA CAMBIADO
+                            patronInicial = tmpPatronInicial
+                            patronInicial.CodAzulejo = patronFinal.CodAzulejo
+
+                        if flgIntercambio:
+
+                            archivo.write(f"{m}x{n + 1}: Intercambio con {j}x{i + 1} | Costo: Q{pisos.Intercambio}\n")
+                            costo += int(pisos.Intercambio)
+                            patronInicial = patronInicial.siguiente
+                            patronFinal = patronFinal.siguiente
+                            continue
+
+                        # SE VOLTEA EL AZULEJO
+                        patronInicial.CodAzulejo = patronFinal.CodAzulejo
+                        costo += int(pisos.Voltear)
+                        archivo.write(f"{m}x{n + 1}: Voltear Azulejo | Costo: Q{pisos.Voltear}\n")
                         patronInicial = patronInicial.siguiente
+                        patronFinal = patronFinal.siguiente
+                    else:
+                        patronInicial.CodAzulejo = patronFinal.CodAzulejo
+                        costo += int(pisos.Voltear)
+                        archivo.write(f"{m}x{n + 1}: Voltear Azulejo | Costo: Q{pisos.Voltear}\n")
+                        patronInicial = patronInicial.siguiente
+                        patronFinal = patronFinal.siguiente
 
-                        j += 1
-                        if j > int(pisos.Columna):
-                            j = 1
-                            i += 1
+            else:
+                # SE IMPRIME POR CONSOLA -------------------------------------
 
-                        if i == (n + 1) and j == m:
-                            if patronInicial is None:
-                                break
+                tmpPatronInicial = patronInicial
+                tmpCodInicial = patronInicial.CodAzulejo
+                tmpNodoAzulejo = NodoAzulejo(str(tmpCodInicial))
+                tmpListaAzulejo.insertar(tmpNodoAzulejo)
 
-                            if patronFinal.CodAzulejo == patronInicial.CodAzulejo:
-                                patronInicial.CodAzulejo = tmpCodInicial
+                m += 1
+                if m > int(pisos.Columna):
+                    m = 1
+                    n += 1
 
-                                flgIntercambio = True
-                                break
-
-                    # SE DEVUELVE EL APUNTADOR HACIA EL AZULEJO QUE HA CAMBIADO
-                    patronInicial = tmpPatronInicial
-                    patronInicial.CodAzulejo = patronFinal.CodAzulejo
-
-                if flgIntercambio:
-
-                    print(f"{m}x{n}: Intercambio con {j}x{i} | Costo: Q{pisos.Voltear}")
-                    costo += int(pisos.Intercambio)
+                if patronInicial.CodAzulejo == patronFinal.CodAzulejo:
+                    print(f"{m}x{n + 1}: No hubo movimiento")
                     patronInicial = patronInicial.siguiente
                     patronFinal = patronFinal.siguiente
                     continue
 
-                # SE VOLTEA EL AZULEJO
-                patronInicial.CodAzulejo = patronFinal.CodAzulejo
-                costo += int(pisos.Voltear)
-                print(f"{m}x{n}: Voltear Azulejo | Costo: Q{pisos.Voltear}")
-                patronInicial = patronInicial.siguiente
-                patronFinal = patronFinal.siguiente
-            else:
-                patronInicial.CodAzulejo = patronFinal.CodAzulejo
-                costo += int(pisos.Voltear)
-                print(f"{m}x{n}: Voltear Azulejo | Costo: Q{pisos.Voltear}")
-                patronInicial = patronInicial.siguiente
-                patronFinal = patronFinal.siguiente
-                    
+                if int(pisos.Intercambio) < int(pisos.Voltear):
 
+                    if m < int(pisos.Columna) and not patronInicial.siguiente is None:
+                        if patronInicial.siguiente.CodAzulejo == patronFinal.CodAzulejo:
+                            # patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
+                            # patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                            print(f"{m}x{n + 1}: Intercambio con {m + 1}x{n + 1} | Costo: Q{pisos.Intercambio}") 
+                            costo += int(pisos.Intercambio)
+                            patronInicial.CodAzulejo = patronInicial.siguiente.CodAzulejo
+                            patronInicial.siguiente.CodAzulejo = tmpCodInicial
+                            patronInicial = patronInicial.siguiente
+                            patronFinal = patronFinal.siguiente
+                            continue
+                    
+                    flgIntercambio = False
+
+                    if n < int(pisos.Fila):
+                        i = n       # Fila salto
+                        j = m       # Columna salto
+
+                        # SE ITERA HASTA EL AZULEJO DE ABAJO
+                        while True:
+                            if patronInicial is None:
+                                break
+
+                            patronInicial = patronInicial.siguiente
+
+                            j += 1
+                            if j > int(pisos.Columna):
+                                j = 1
+                                i += 1
+
+                            if i == (n + 1) and j == m:
+                                if patronInicial is None:
+                                    break
+
+                                if patronFinal.CodAzulejo == patronInicial.CodAzulejo:
+                                    patronInicial.CodAzulejo = tmpCodInicial
+
+                                    flgIntercambio = True
+                                    break
+
+                        # SE DEVUELVE EL APUNTADOR HACIA EL AZULEJO QUE HA CAMBIADO
+                        patronInicial = tmpPatronInicial
+                        patronInicial.CodAzulejo = patronFinal.CodAzulejo
+
+                    if flgIntercambio:
+
+                        print(f"{m}x{n + 1}: Intercambio con {j}x{i + 1} | Costo: Q{pisos.Intercambio}")
+                        costo += int(pisos.Intercambio)
+                        patronInicial = patronInicial.siguiente
+                        patronFinal = patronFinal.siguiente
+                        continue
+
+                    # SE VOLTEA EL AZULEJO
+                    patronInicial.CodAzulejo = patronFinal.CodAzulejo
+                    costo += int(pisos.Voltear)
+                    print(f"{m}x{n + 1}: Voltear Azulejo | Costo: Q{pisos.Voltear}")
+                    patronInicial = patronInicial.siguiente
+                    patronFinal = patronFinal.siguiente
+                else:
+                    patronInicial.CodAzulejo = patronFinal.CodAzulejo
+                    costo += int(pisos.Voltear)
+                    print(f"{m}x{n + 1}: Voltear Azulejo | Costo: Q{pisos.Voltear}")
+                    patronInicial = patronInicial.siguiente
+                    patronFinal = patronFinal.siguiente
+
+        if pisos.Patrones.cabeza == patron:
+            pisos.Patrones.cabeza.Patron = None
+            pisos.Patrones.cabeza.Patron = tmpListaAzulejo
+        else:
+            pisos.Patrones.cola.Patron = None          
+            pisos.Patrones.cola.Patron = tmpListaAzulejo          
+
+        if (tipo == "Txt"):
+            archivo.write("-----------------------------")
+            archivo.write(f"Costo total: Q{costo}")
+        else:
+            print("-----------------------------")
+            print(f"Costo total: Q{costo}")

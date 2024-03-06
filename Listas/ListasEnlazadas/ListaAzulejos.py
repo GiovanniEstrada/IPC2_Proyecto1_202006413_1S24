@@ -13,11 +13,11 @@ class ListaAzulejos:
             vlNodo.anterior = self.cola
             self.cola.siguiente = vlNodo
             self.cola = vlNodo
-
-    def imprimir(self):
+    
+    def imprimir(self, archivo):
         tmpNodoActual = self.cabeza
         while tmpNodoActual:
-            print("COLOR AZULEJO: ", tmpNodoActual.CodAzulejo)
+            archivo.write(f"Color Azulejo:  {tmpNodoActual.CodAzulejo}\n")
             tmpNodoActual = tmpNodoActual.siguiente            
 
     def buscarAzulejo(self, vlColumnaT, vlFilaB, vlColumnaB):
