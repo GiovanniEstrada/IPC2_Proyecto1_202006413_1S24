@@ -70,8 +70,25 @@ def abrir_Programa(listaPisos, piso, patron, imprimir):
         return
     
     pisosTmp = listaPisos
-    pisosTmp.graficarPisos(piso, patron)
     pisosTmp.instruccionCambio(piso, patron, imprimir)
+    print("Se imprimen los patrones antes y despues...")
+    pisosTmp.graficarPiso(piso, patron)
+    pisosTmp.graficarPisos(piso, patron)
+
+def verPatron(listaPisos, piso, patron):
+    if piso == "" or patron == "":
+        messagebox.showerror("Error", "Falta llenar un campo")
+        return
+    
+    if not listaPisos.buscarPiso(piso):
+        messagebox.showerror("Error", "No se encontró el piso")
+        return
+    
+    if not listaPisos.buscarPatron(piso, patron):
+        messagebox.showerror("Error", "No se encontró el patrón")
+        return
+    
+    listaPisos.graficarPiso(piso, patron)
 
 
         
@@ -107,8 +124,12 @@ def abrir_seleccionPiso(listaPisos):
 
 
     # Botón para confirmar selección
-    btnConfirmar = tk.Button(seleccionPiso, text="Confirmar", command=lambda: abrir_Programa(listaPisos, txtbPiso.get(), txtbPatron.get(), combo.get()))
+    btnConfirmar = tk.Button(seleccionPiso, text="Realizar cambio", command=lambda: abrir_Programa(listaPisos, txtbPiso.get(), txtbPatron.get(), combo.get()))
     btnConfirmar.pack()
+
+    # Botón para confirmar selección
+    btnVerPatron = tk.Button(seleccionPiso, text="Ver Patrón", command=lambda: verPatron(listaPisos, txtbPiso.get(), txtbPatron.get()))
+    btnVerPatron.pack()
 
 
 def main():

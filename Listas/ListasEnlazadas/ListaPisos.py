@@ -93,26 +93,24 @@ class ListaPisos:
         
         if pisos.Patrones.cabeza.Codigo == vlNombrePatron:
             NodoPatrones = pisos.Patrones.cola
+            PatronFinal = pisos.Patrones.cabeza.Codigo
         else:
             NodoPatrones = pisos.Patrones.cabeza
+            PatronFinal = pisos.Patrones.cola.Codigo
 
 
         dot = Digraph('G')
-        dot.attr(rankdir='TB')
+        dot.attr(rankdir='LR')
         dot.attr('node', shape='box', style='filled')
     
         n = int(pisos.Fila)
         m = int(pisos.Columna)
         with dot.subgraph(name='matriz_azulejos') as c:
 
-            c.node('T', f'Nombre piso: {vlNombrePiso}', fontsize='15', shape='plaintext')
-
-            c.node('S', f'Código: {NodoPatrones.Codigo}', fontsize='15', shape='plaintext')
-
             for i in range(n):
                 for j in range(m):
                     
-                    tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, i, j)
+                    tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, n - i - 1, j)
                     idNodo = node_id = f'{str(n - i) + str(m - j)}'
                     
                     if tmpNodoAzulejo is None:
@@ -134,7 +132,7 @@ class ListaPisos:
             tmpFilaB = ''
             tmpEdgeNode = []
             for j in range(m):
-                tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, i, j)
+                tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, n - i - 1, j)
                 tmpFilaB = tmpFilaA
                 tmpFilaA = f'{str(n - i) + str(m - j)}'
                 if(tmpFilaB != ''):
@@ -142,10 +140,79 @@ class ListaPisos:
 
             dot.edges(tmpEdgeNode)
             dot.edge_attr.update(style='invis')
-            print(tmpEdgeNode)
+            # print(tmpEdgeNode)
 
             # Guardar el gráfico
-        dot.render(f'{NodoPatrones.Codigo}.gv', view=True)
+        dot.render(f'Cambio_{NodoPatrones.Codigo}x{PatronFinal}.gv', view=True)
+
+        NodoPatrones = NodoPatrones.siguiente
+
+
+    def graficarPiso(self, vlNombrePiso, vlNombrePatron):
+
+        # SE HACE AL BUSQUEDA DEL PISO Y SU PATRON
+        pisos = self.cabeza
+        while pisos:
+            if pisos.Nombre == vlNombrePiso:
+                break
+            pisos = pisos.siguiente
+
+        # SE VALIDA QUE EL PISO SE HAYA ENCONTRADO
+        if pisos == None:
+            print("No se ha encontrado el piso, ingrese nuevamente...")
+            return False
+        
+        if pisos.Patrones.cabeza.Codigo == vlNombrePatron:
+            NodoPatrones = pisos.Patrones.cabeza
+        else:
+            NodoPatrones = pisos.Patrones.cola
+
+
+        dot = Digraph('G')
+        dot.attr(rankdir='LR')
+        dot.attr('node', shape='box', style='filled')
+    
+        n = int(pisos.Fila)
+        m = int(pisos.Columna)
+        with dot.subgraph(name='matriz_azulejos') as c:
+
+            for i in range(n):
+                for j in range(m):
+                    
+                    tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, n - i - 1, j)
+                    idNodo = node_id = f'{str(n - i) + str(m - j)}'
+                    
+                    if tmpNodoAzulejo is None:
+                        break
+
+                    if str(tmpNodoAzulejo.CodAzulejo) == "N":
+                        c.node(f'{idNodo}', 'N', fillcolor='black', fontcolor='white')
+                    else:
+                        c.node(f'{idNodo}', 'B', fillcolor='white')
+                    
+                    if j > 0:
+                        c.edge(f'{idNodo}', f'{node_id[:-1]}{m-j}', style='invis')
+                    if i > 0:
+                        c.edge(f'{idNodo}', f'{node_id[:-1]}{m-j}', style='invis')
+
+
+        for i in range(n):
+            tmpFilaA = ''
+            tmpFilaB = ''
+            tmpEdgeNode = []
+            for j in range(m):
+                tmpNodoAzulejo = NodoPatrones.Patron.buscarAzulejo(m, n - i - 1, j)
+                tmpFilaB = tmpFilaA
+                tmpFilaA = f'{str(n - i) + str(m - j)}'
+                if(tmpFilaB != ''):
+                    tmpEdgeNode.append((f'{tmpFilaB}', f'{tmpFilaA}'))
+
+            dot.edges(tmpEdgeNode)
+            dot.edge_attr.update(style='invis')
+            # print(tmpEdgeNode)
+
+            # Guardar el gráfico
+        dot.render(f'Patron_{NodoPatrones.Codigo}.gv', view=True)
 
         NodoPatrones = NodoPatrones.siguiente
 
@@ -200,17 +267,21 @@ class ListaPisos:
         if pisos.Patrones.cabeza == patron:
             patronInicial = pisos.Patrones.cabeza.Patron.cabeza
             patronFinal = pisos.Patrones.cola.Patron.cabeza
+            codInicial = pisos.Patrones.cabeza.Codigo
+            codFinal = pisos.Patrones.cola.Codigo
         else:
             patronInicial = pisos.Patrones.cola.Patron.cabeza
             patronFinal = pisos.Patrones.cabeza.Patron.cabeza
+            codInicial = pisos.Patrones.cola.Codigo
+            codFinal = pisos.Patrones.cabeza.Codigo
 
+        with open(f"Instruccion-{codInicial}x{codFinal}.txt", "w") as archivo:
+            archivo.write("INSTRUCCIONES PARA CAMBIO DE PISO: \n")
         while patronInicial:
 
             if tipo == "Txt":
-                with open(f"Instruccion-{pisos.Nombre}.txt", "w") as archivo:
-                    archivo.write("INSTRUCCIONES PARA CAMBIO DE PISO: \n")
 
-                with open(f"Instruccion-{pisos.Nombre}.txt", "a") as archivo:
+                with open(f"Instruccion-{codInicial}x{codFinal}.txt", "a") as archivo:
                     tmpPatronInicial = patronInicial
                     tmpCodInicial = patronInicial.CodAzulejo
 
@@ -386,8 +457,9 @@ class ListaPisos:
             pisos.Patrones.cola.Patron = tmpListaAzulejo          
 
         if (tipo == "Txt"):
-            archivo.write("-----------------------------")
-            archivo.write(f"Costo total: Q{costo}")
+            with open(f"Instruccion-{codInicial}x{codFinal}.txt", "a") as archivo:
+                archivo.write("-----------------------------")
+                archivo.write(f"Costo total: Q{costo}")
         else:
             print("-----------------------------")
             print(f"Costo total: Q{costo}")
